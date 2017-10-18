@@ -1,14 +1,12 @@
 defmodule Coffeeword.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Coffeeword.Accounts.User
+  alias Coffeeword.Accounts.{User, Credential}
 
 
   schema "users" do
-    field :email, :string
     field :name, :string
-    field :password, :string, virtual: true
-    field :password_hash, :string
+    has_one :credential, Credential
 
     timestamps()
   end
@@ -16,20 +14,8 @@ defmodule Coffeeword.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:name, :email, :password])
-    |> validate_required([:name, :email, :password])
-    |> validate_length(:password, min: 6, max: 100)
-    |> unique_constraint(:email)
-    |> put_pass_hash()
-  end
-
-  defp put_pass_hash(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
-        put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
-      _ ->
-        changeset
-    end
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
   end
 
 end
