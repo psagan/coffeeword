@@ -23,8 +23,28 @@ defmodule Coffeeword.Accounts do
     |> Repo.preload(:credential)
   end
 
+
   @doc """
-  Gets a single user.
+  Gets a single user (with credential).
+
+  ## Examples
+
+      iex> get_user(123)
+      %User{}
+
+      iex> get_user(456)
+      nil
+
+  """
+  def get_user(id) do
+    User
+    |> Repo.get(id)
+    |> Repo.preload(:credential)
+  end
+
+
+  @doc """
+  Gets a single user (with credential).
 
   Raises `Ecto.NoResultsError` if the User does not exist.
 
@@ -41,6 +61,28 @@ defmodule Coffeeword.Accounts do
     User
     |> Repo.get!(id)
     |> Repo.preload(:credential)
+  end
+
+  @doc """
+  Gets a single user by email (with credential).
+
+  ## Examples
+
+      iex> get_by_email('myemail@example.com')
+      %User{}
+
+      iex> get_by_email('non-existing@example.com')
+      nil
+
+  """
+  def get_by_email(email) do
+    query =
+      from u in User,
+        preload: [:credential],
+        inner_join: c in assoc(u, :credential),
+        where: c.email == ^email
+
+    Repo.one(query)
   end
 
   @doc """
