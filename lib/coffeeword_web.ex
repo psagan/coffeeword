@@ -23,6 +23,7 @@ defmodule CoffeewordWeb do
       import Plug.Conn
       import CoffeewordWeb.Router.Helpers
       import CoffeewordWeb.Gettext
+      import CoffeewordWeb.Auth, only: [authenticate_user: 2]
     end
   end
 
@@ -48,6 +49,7 @@ defmodule CoffeewordWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import CoffeewordWeb.Auth, only: [authenticate_user: 2]
     end
   end
 
