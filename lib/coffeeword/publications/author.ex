@@ -7,7 +7,7 @@ defmodule Coffeeword.Publications.Author do
   schema "authors" do
     field :bio, :string
     field :role, :integer
-    has_manu :articles, Article
+    has_many :articles, Article
     belongs_to :user, Coffeeword.Accounts.User
 
     timestamps()
