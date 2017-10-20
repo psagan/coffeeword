@@ -1,13 +1,14 @@
 defmodule Coffeeword.Publications.Author do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Coffeeword.Publications.Author
+  alias Coffeeword.Publications.{Author, Article}
 
 
   schema "authors" do
     field :bio, :string
     field :role, :integer
-    field :user_id, :id
+    has_manu :articles, Article
+    belongs_to :user, Coffeeword.Accounts.User
 
     timestamps()
   end
