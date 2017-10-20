@@ -27,6 +27,13 @@ defmodule CoffeewordWeb.Router do
     resources "/users", UserController
   end
 
+  scope "/publications", CoffeewordWeb.Publications, as: :publications do
+    pipe_through [:browser, :authenticate_user]
+
+    resources "/articles", ArticleController
+  end
+
+
   # Other scopes may use custom stacks.
   # scope "/api", CoffeewordWeb do
   #   pipe_through :api
