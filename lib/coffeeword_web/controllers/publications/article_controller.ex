@@ -29,7 +29,11 @@ defmodule CoffeewordWeb.Publications.ArticleController do
   end
 
   def show(conn, %{"id" => id}) do
-    article = Publications.get_article!(id)
+    article =
+      id
+      |> Publications.get_article!()
+      |> Publications.incr_article_views()
+
     render(conn, "show.html", article: article)
   end
 

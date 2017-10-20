@@ -81,6 +81,15 @@ defmodule Coffeeword.Publications do
     |> Repo.update()
   end
 
+  def incr_article_views(%Article{} = article) do
+    {1, [%Article{views: views}]} =
+      Repo.update_all(
+        from(a in Article, where: a.id == ^article.id),
+        [inc: [views: 1]], returning: [:views])
+
+    put_in(article.views, views)
+  end
+
   @doc """
   Deletes a Article.
 
