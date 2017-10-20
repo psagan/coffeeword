@@ -6,7 +6,8 @@ defmodule Coffeeword.Publications do
   import Ecto.Query, warn: false
   alias Coffeeword.Repo
 
-  alias Coffeeword.Publications.Article
+  alias Coffeeword.Publications.{Article, Author}
+  alias Coffeeword.Accounts
 
   @doc """
   Returns the list of articles.
@@ -18,7 +19,9 @@ defmodule Coffeeword.Publications do
 
   """
   def list_articles do
-    Repo.all(Article)
+    Article
+    |> Repo.all()
+    |> Repo.preload(author: [user: :credential])
   end
 
   @doc """
@@ -35,7 +38,11 @@ defmodule Coffeeword.Publications do
       ** (Ecto.NoResultsError)
 
   """
-  def get_article!(id), do: Repo.get!(Article, id)
+  def get_article!(id) do
+    Article
+    |> Repo.get!(id)
+    |> Repo.preload(author: [user: :credential])
+  end
 
   @doc """
   Creates a article.
@@ -102,8 +109,6 @@ defmodule Coffeeword.Publications do
     Article.changeset(article, %{})
   end
 
-  alias Coffeeword.Publications.Author
-
   @doc """
   Returns the list of authors.
 
@@ -131,7 +136,11 @@ defmodule Coffeeword.Publications do
       ** (Ecto.NoResultsError)
 
   """
-  def get_author!(id), do: Repo.get!(Author, id)
+  def get_author!(id) do
+    Author
+    |> Repo.get!(id)
+    |> Repo.preload(author: [user: :credential])
+  end
 
   @doc """
   Creates a author.
