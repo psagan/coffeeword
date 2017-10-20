@@ -56,9 +56,10 @@ defmodule Coffeeword.Publications do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_article(attrs \\ %{}) do
+  def create_article(%Author{} = author, attrs \\ %{}) do
     %Article{}
     |> Article.changeset(attrs)
+    |> Ecto.Changeset.put_change(:author_id, author.id)
     |> Repo.insert()
   end
 
