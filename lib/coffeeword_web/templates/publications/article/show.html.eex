@@ -17,6 +17,12 @@
     <%= @article.views %>
   </li>
 
+
+  <li>
+    <strong>Author:</strong>
+    <%= author_name(@article) %>
+  </li>
+
 </ul>
 
 <span><%= link "Edit", to: publications_article_path(@conn, :edit, @article) %></span>
