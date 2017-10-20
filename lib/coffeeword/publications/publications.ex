@@ -207,4 +207,16 @@ defmodule Coffeeword.Publications do
   def change_author(%Author{} = author) do
     Author.changeset(author, %{})
   end
+
+  def ensure_author_exists(%User{} = user) do
+    %Author{user_id: user.id}
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.unique_constraint(:user_id)
+    |> Repo.insert()
+    |> handle_existing_author()
+  end
+  defp handle_existing_author({:ok, author}), do: author
+  defp handle_existing_author({:error, changeset}) do
+    Repo.get_by!(Author, user_id: changeset.data.user_id)
+  end
 end
