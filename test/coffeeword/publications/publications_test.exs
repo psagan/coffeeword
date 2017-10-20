@@ -66,4 +66,66 @@ defmodule Coffeeword.PublicationsTest do
       assert %Ecto.Changeset{} = Publications.change_article(article)
     end
   end
+
+  describe "authors" do
+    alias Coffeeword.Publications.Author
+
+    @valid_attrs %{bio: "some bio", role: 42}
+    @update_attrs %{bio: "some updated bio", role: 43}
+    @invalid_attrs %{bio: nil, role: nil}
+
+    def author_fixture(attrs \\ %{}) do
+      {:ok, author} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Publications.create_author()
+
+      author
+    end
+
+    test "list_authors/0 returns all authors" do
+      author = author_fixture()
+      assert Publications.list_authors() == [author]
+    end
+
+    test "get_author!/1 returns the author with given id" do
+      author = author_fixture()
+      assert Publications.get_author!(author.id) == author
+    end
+
+    test "create_author/1 with valid data creates a author" do
+      assert {:ok, %Author{} = author} = Publications.create_author(@valid_attrs)
+      assert author.bio == "some bio"
+      assert author.role == 42
+    end
+
+    test "create_author/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Publications.create_author(@invalid_attrs)
+    end
+
+    test "update_author/2 with valid data updates the author" do
+      author = author_fixture()
+      assert {:ok, author} = Publications.update_author(author, @update_attrs)
+      assert %Author{} = author
+      assert author.bio == "some updated bio"
+      assert author.role == 43
+    end
+
+    test "update_author/2 with invalid data returns error changeset" do
+      author = author_fixture()
+      assert {:error, %Ecto.Changeset{}} = Publications.update_author(author, @invalid_attrs)
+      assert author == Publications.get_author!(author.id)
+    end
+
+    test "delete_author/1 deletes the author" do
+      author = author_fixture()
+      assert {:ok, %Author{}} = Publications.delete_author(author)
+      assert_raise Ecto.NoResultsError, fn -> Publications.get_author!(author.id) end
+    end
+
+    test "change_author/1 returns a author changeset" do
+      author = author_fixture()
+      assert %Ecto.Changeset{} = Publications.change_author(author)
+    end
+  end
 end
