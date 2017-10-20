@@ -18,7 +18,7 @@ defmodule CoffeewordWeb.Publications.ArticleController do
   end
 
   def create(conn, %{"article" => article_params}) do
-    case Publications.create_article(article_params) do
+    case Publications.create_article(conn.assigns.current_author, article_params) do
       {:ok, article} ->
         conn
         |> put_flash(:info, "Article created successfully.")
@@ -33,28 +33,24 @@ defmodule CoffeewordWeb.Publications.ArticleController do
     render(conn, "show.html", article: article)
   end
 
-  def edit(conn, %{"id" => id}) do
-    article = Publications.get_article!(id)
-    changeset = Publications.change_article(article)
-    render(conn, "edit.html", article: article, changeset: changeset)
+  def edit(conn, _) do
+    changeset = Publications.change_article(conn.assigns.article)
+    render(conn, "edit.html", changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "article" => article_params}) do
-    article = Publications.get_article!(id)
-
-    case Publications.update_article(article, article_params) do
+  def update(conn, %{"article" => article_params}) do
+    case Publications.update_article(conn.assigns.article, article_params) do
       {:ok, article} ->
         conn
         |> put_flash(:info, "Article updated successfully.")
         |> redirect(to: publications_article_path(conn, :show, article))
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", article: article, changeset: changeset)
+        render(conn, "edit.html", changeset: changeset)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    article = Publications.get_article!(id)
-    {:ok, _article} = Publications.delete_article(article)
+  def delete(conn, _) do
+    {:ok, _article} = Publications.delete_article(conn.assigns.article)
 
     conn
     |> put_flash(:info, "Article deleted successfully.")
@@ -67,11 +63,11 @@ defmodule CoffeewordWeb.Publications.ArticleController do
   end
 
   defp authorize_article(conn, _) do
-    article = Publications.get_article!(params[:id])
+    article = Publications.get_article!(conn.params[:id])
 
     cond do
       conn.assigns.current_author.id == article.author_id ->
-        conn
+        assign(conn, :article, article)
       true ->
         conn
         |> put_flash(:info, "You can't modify that article!")

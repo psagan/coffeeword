@@ -208,7 +208,7 @@ defmodule Coffeeword.Publications do
     Author.changeset(author, %{})
   end
 
-  def ensure_author_exists(%User{} = user) do
+  def ensure_author_exists(%Accounts.User{} = user) do
     %Author{user_id: user.id}
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.unique_constraint(:user_id)
