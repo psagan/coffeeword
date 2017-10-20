@@ -4,6 +4,9 @@ defmodule CoffeewordWeb.Publications.ArticleController do
   alias Coffeeword.Publications
   alias Coffeeword.Publications.Article
 
+  plug :require_existing_author
+  plug :authorize_article when action in [:edit, :update, :delete]
+
   def index(conn, _params) do
     articles = Publications.list_articles()
     render(conn, "index.html", articles: articles)
@@ -56,5 +59,24 @@ defmodule CoffeewordWeb.Publications.ArticleController do
     conn
     |> put_flash(:info, "Article deleted successfully.")
     |> redirect(to: publications_article_path(conn, :index))
+  end
+
+  defp require_existing_author(conn, _) do
+    author = Publications.ensure_author_exists(conn.assigns.current_user)
+    assign(conn, :current_author, author)
+  end
+
+  defp authorize_article(conn, _) do
+    article = Publications.get_article!(params[:id])
+
+    cond do
+      conn.assigns.current_author.id == article.author_id ->
+        conn
+      true ->
+        conn
+        |> put_flash(:info, "You can't modify that article!")
+        |> redirect(to: publications_article_path(conn, :index))
+        |> halt()
+    end
   end
 end
